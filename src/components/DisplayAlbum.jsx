@@ -1,7 +1,7 @@
 import React from 'react'
 import Navbar from './Navbar'
 import { useParams } from 'react-router-dom'
-import { albumsData, assets } from '../assets/assets';
+import { albumsData, assets, songsData } from '../assets/assets';
 
 function DisplayAlbum() {
     const { id } = useParams();
@@ -15,7 +15,7 @@ function DisplayAlbum() {
         <img className='w-48 rounded' src={albumData.image} alt="" />
         <div className='flex flex-col'>
             <p>Playlist</p>
-            <h2>{albumData.name}</h2>
+            <h className='text-[50px] font-bold' >{albumData.name}</h>
             <h4>{albumData.desc}</h4>
             <p className='mt-1'>
                 <img className='inline-block w-5' src={assets.spotify_logo} alt="" />
@@ -32,6 +32,22 @@ function DisplayAlbum() {
         <p className='hidden sm:block'>Date Added</p>
         <img className='m-auto w-4' src={assets.clock_icon} alt="" />
     </div>
+    <hr />
+    {
+        songsData.map( (item,index) => (
+            <div key={index} className='grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7] hover:bg-[#ffffff26] cursor-pointer'>
+                <p className='text-white mb-4'>
+                    <b className='mr-4 text-[#a7a7a7]'>{index+1}</b>
+                    <img className='w-10 inline mr-5' src={item.image} alt="" />
+                    {item.name}
+                </p>
+                <p className='mb-4 text-[15px]'>{albumData.name}</p>
+                <p className='text-[15px] hidden sm:block mb-4' >5 days ago</p>
+                <p className='text-[15px] text-center'>{item.duration}</p>
+
+            </div>
+        ))
+    }
     </>
   )
 }
