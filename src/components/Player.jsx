@@ -4,7 +4,18 @@ import { PlayerContext } from '../context/PlayerContext'
 
 function Player() {
 
-    const { seekBar,seekBg, playStatus,play,pause  ,track,time , previous, next , seekSong} = useContext(PlayerContext)
+    const { 
+        seekBar,
+        seekBg, 
+        playStatus,play,pause,
+        track,time, 
+        previous, next , seekSong,
+        volume,
+        toggleMute,
+        isMuted,
+        seekVolume,
+        volumeBg,volumeBar
+    } = useContext(PlayerContext)
     // console.log(seekbar);
     
 
@@ -42,7 +53,27 @@ function Player() {
         <img className='w-4' src={assets.queue_icon} alt="" />
         <img className='w-4' src={assets.speaker_icon} alt="" />
         <img className='w-4' src={assets.volume_icon} alt="" />
-        <div className='w-20 bg-slate-50 h-1 rounded'></div>
+         {/* Volume Slider */}
+                    <div className=''>
+                        {/* Volume Bar Background */}
+                        <div 
+                            ref={volumeBg}
+                            onClick={seekVolume}
+                            className='w-20 h-1 bg-gray-400 rounded-full cursor-pointer hover:h-[6px] transition-all duration-200'
+                        >
+                            {/* Volume Progress Bar */}
+                            <div 
+                                ref={volumeBar}
+                                className='h-full bg-red-600 rounded-full transition-all duration-200 hover:bg-green-400'
+                                style={{width: `${volume * 100}%`}}
+                            ></div>
+                        </div>
+                        
+                        {/* Volume Tooltip - hover पर show होता है */}
+                        <div className='absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
+                            {Math.round(volume * 100)}%
+                        </div>
+                    </div>
         <img className='w-4' src={assets.mini_player_icon} alt="" />
         <img className='w-4' src={assets.zoom_icon} alt="" />
     </div>

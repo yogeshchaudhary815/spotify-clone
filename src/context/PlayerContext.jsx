@@ -8,6 +8,8 @@ const PlayerContextProvider = (props) => {
     const audioRef = useRef();
     const seekBg = useRef();
     const seekBar = useRef();
+    const volumeBg = useRef();
+    const volumeBar = useRef();
 
     const [track,setTrack] = useState(songsData[0])
     const [playStatus,setPlayStatus] = useState(false);
@@ -21,6 +23,9 @@ const PlayerContextProvider = (props) => {
             minute:0
         }
     })
+    const [volume, setVolume] = useState(0.5)
+    const [previousVolume, setPreviousVolume] = useState(0.5);
+    const [isMuted, setIsMuted] = useState(false);
 
     const play = () => {
         audioRef.current.play();
@@ -45,6 +50,56 @@ const PlayerContextProvider = (props) => {
             setPlayStatus(true);
         }
     }
+
+    // Volume change करने का function
+    const changeVolume = (newVolume) => {
+        if (audioRef.current) {
+            const volumeValue = Math.max(0, Math.min(1, newVolume)); // 0-1 range में रखें
+            setVolume(volumeValue);
+            audioRef.current.volume = volumeValue;
+            
+            // Volume bar की width update करें
+            if (volumeBar.current) {
+                volumeBar.current.style.width = (volumeValue * 100) + "%";
+            }
+            
+            // Muted state update करें
+            setIsMuted(volumeValue === 0);
+        }
+    };
+
+    // Volume bar पर click करके volume set करना
+    const seekVolume = (e) => {
+        if (volumeBg.current) {
+            const volumeBgElement = volumeBg.current;
+            const rect = volumeBgElement.getBoundingClientRect();
+            const clickX = e.nativeEvent.offsetX;
+            const volumeBgWidth = rect.width;
+            
+            const newVolume = clickX / volumeBgWidth;
+            changeVolume(newVolume);
+        }
+    };
+
+    // Mute/Unmute toggle करना
+    const toggleMute = () => {
+        if (isMuted) {
+            // Unmute - previous volume restore करें
+            changeVolume(previousVolume);
+        } else {
+            // Mute - current volume save करके 0 करें
+            setPreviousVolume(volume);
+            changeVolume(0);
+        }
+    };
+
+    // Audio element का volume set करना जब component load हो
+     useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.volume = volume;
+        }
+    }, []);
+    
 
     const next = async () => {
         if(track.id < songsData.length -1){
@@ -90,7 +145,15 @@ const PlayerContextProvider = (props) => {
         play,pause,
         playWithId,
         previous, next,
-        seekSong
+        seekSong,
+        // Volume related values और functions
+        volume, setVolume,
+        changeVolume,
+        toggleMute,
+        isMuted,
+        seekVolume,
+        volumeBg,
+        volumeBar,
     }
 
     return (
